@@ -10,4 +10,10 @@ Steps to run the application.
 - Build and Run the solution.
 - Enter Consumption value and get the results in sorted order.
 
+Please find some sample examples.
+
 [![Tariff-Comparison-Console.png](https://i.postimg.cc/JnkzGkB2/Tariff-Comparison-Console.png)](https://postimg.cc/ftMNPkCc)
+
+[![Tariff-Comparison-Console-Screenshot2.png](https://i.postimg.cc/C5K7YS2J/Tariff-Comparison-Console-Screenshot2.png)](https://postimg.cc/N9WmkqBr)
+
+[![Tariff-Comparison-Console-Screenshot3.png](https://i.postimg.cc/1X6GyXHG/Tariff-Comparison-Console-Screenshot3.png)](https://postimg.cc/xNfJR0B8)

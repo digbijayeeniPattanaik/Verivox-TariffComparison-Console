@@ -8,31 +8,35 @@ using TariffComparison.ProductTypes;
 
 namespace TariffComparison
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             IMapper mapper = InitMapper();
             string consumptionInput = string.Empty;
             int consumption = 0;
+
             while (string.IsNullOrWhiteSpace(consumptionInput))
             {
-                while (string.IsNullOrWhiteSpace(consumptionInput))
+                Console.WriteLine("Please enter the Consumption (kWh/year)");
+                consumptionInput = Console.ReadLine();
+                if (consumptionInput.All(a => char.IsDigit(a)))
                 {
-                    Console.WriteLine("Please enter the Consumption (kWh/year)");
-                    consumptionInput = Console.ReadLine();
-                    if (consumptionInput.All(a => char.IsDigit(a)))
+                    bool isParsable = Int32.TryParse(consumptionInput, out consumption);
+                    if (!isParsable)
                     {
-                        consumption = Convert.ToInt32(consumptionInput);
+                        consumptionInput = string.Empty;
+                        Console.WriteLine("Could not be parsed.");
                     }
                 }
-
-                IEnumerable<Product> products = GetProducts(mapper, consumption);
-
-                Console.WriteLine(JsonConvert.SerializeObject(products));
-                consumptionInput = string.Empty;
             }
-            Console.ReadLine();
+
+            IEnumerable<Product> products = GetProducts(mapper, consumption);
+
+            Console.WriteLine(JsonConvert.SerializeObject(products));
+
+            Console.WriteLine("Press any key to exit...");
+            Console.ReadKey();
         }
 
         public static IEnumerable<Product> GetProducts(IMapper mapper, int consumption)

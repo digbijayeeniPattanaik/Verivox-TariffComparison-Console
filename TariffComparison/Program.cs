@@ -13,23 +13,7 @@ namespace TariffComparison
         public static void Main(string[] args)
         {
             IMapper mapper = InitMapper();
-            string consumptionInput = string.Empty;
-            int consumption = 0;
-
-            while (string.IsNullOrWhiteSpace(consumptionInput))
-            {
-                Console.WriteLine("Please enter the Consumption (kWh/year)");
-                consumptionInput = Console.ReadLine();
-                if (consumptionInput.All(a => char.IsDigit(a)))
-                {
-                    bool isParsable = Int32.TryParse(consumptionInput, out consumption);
-                    if (!isParsable)
-                    {
-                        consumptionInput = string.Empty;
-                        Console.WriteLine("Could not be parsed.");
-                    }
-                }
-            }
+            int consumption = GetConsumptionValue();
 
             IEnumerable<Product> products = GetProducts(mapper, consumption);
 
@@ -39,6 +23,25 @@ namespace TariffComparison
             Console.ReadKey();
         }
 
+        public static int GetConsumptionValue()
+        {
+            int consumption = 0;
+            string consumptionInput = string.Empty;
+            while (string.IsNullOrWhiteSpace(consumptionInput))
+            {
+                Console.WriteLine("Please enter the Consumption (kWh/year)");
+                consumptionInput = Console.ReadLine();
+                bool isParsable = Int32.TryParse(consumptionInput, out consumption);
+                if (!isParsable)
+                {
+                    consumptionInput = string.Empty;
+                    Console.WriteLine("Invalid Consumption value");
+                }
+            }
+
+            return consumption;
+        }
+
         public static IEnumerable<Product> GetProducts(IMapper mapper, int consumption)
         {
             List<ICalculationUnit> units = GetCalculationUnitsForAllProducts(consumption);
@@ -46,15 +49,6 @@ namespace TariffComparison
             List<Product> products = mapper.Map<List<Product>>(units);
 
             return products;
-        }
-
-        private static List<ICalculationUnit> GetCalculationUnitsForAllProducts(int consumption)
-        {
-            List<ICalculationUnit> units = new List<ICalculationUnit>();
-            units.Add(new ProductA(consumption));
-            units.Add(new ProductB(consumption));
-            units = units.OrderBy(a => a.AnnualCosts).ToList();
-            return units;
         }
 
         public static Mapper InitMapper()
@@ -67,5 +61,15 @@ namespace TariffComparison
             var mapper = new Mapper(config);
             return mapper;
         }
+
+        private static List<ICalculationUnit> GetCalculationUnitsForAllProducts(int consumption)
+        {
+            List<ICalculationUnit> units = new List<ICalculationUnit>();
+            units.Add(new ProductA(consumption));
+            units.Add(new ProductB(consumption));
+            units = units.OrderBy(a => a.AnnualCosts).ToList();
+            return units;
+        }
+
     }
 }

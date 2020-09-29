@@ -23,7 +23,36 @@ namespace TariffComparison
             Console.ReadKey();
         }
 
-        public static int GetConsumptionValue()
+        public static IEnumerable<Product> GetProducts(IMapper mapper, int consumption)
+        {
+            IEnumerable<ICalculationUnit> units = GetCalculationUnitsForAllProducts(consumption);
+
+            IEnumerable<Product> products = mapper.Map<IEnumerable<Product>>(units);
+
+            return products;
+        }
+
+        public static Mapper InitMapper()
+        {
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.CreateMap<ProductA, Product>();
+                cfg.CreateMap<ProductB, Product>();
+            });
+            var mapper = new Mapper(config);
+            return mapper;
+        }
+
+        private static IEnumerable<ICalculationUnit> GetCalculationUnitsForAllProducts(int consumption)
+        {
+            List<ICalculationUnit> units = new List<ICalculationUnit>();
+            units.Add(new ProductA(consumption));
+            units.Add(new ProductB(consumption));
+            units = units.OrderBy(a => a.AnnualCosts).ToList();
+            return units;
+        }
+
+        private static int GetConsumptionValue()
         {
             int consumption = 0;
             string consumptionInput = string.Empty;
@@ -41,35 +70,5 @@ namespace TariffComparison
 
             return consumption;
         }
-
-        public static IEnumerable<Product> GetProducts(IMapper mapper, int consumption)
-        {
-            List<ICalculationUnit> units = GetCalculationUnitsForAllProducts(consumption);
-
-            List<Product> products = mapper.Map<List<Product>>(units);
-
-            return products;
-        }
-
-        public static Mapper InitMapper()
-        {
-            var config = new MapperConfiguration(cfg =>
-            {
-                cfg.CreateMap<ProductA, Product>();
-                cfg.CreateMap<ProductB, Product>();
-            });
-            var mapper = new Mapper(config);
-            return mapper;
-        }
-
-        private static List<ICalculationUnit> GetCalculationUnitsForAllProducts(int consumption)
-        {
-            List<ICalculationUnit> units = new List<ICalculationUnit>();
-            units.Add(new ProductA(consumption));
-            units.Add(new ProductB(consumption));
-            units = units.OrderBy(a => a.AnnualCosts).ToList();
-            return units;
-        }
-
     }
 }
